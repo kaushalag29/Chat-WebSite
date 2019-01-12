@@ -13,8 +13,13 @@ var socket;
         }
     });
 
+    socket.on('user-online',function(data){
+        console.log(document.getElementById('online-users').innerHTML);
+        document.getElementById('online-users').innerHTML = 'Active Users: ' + data.toString();
+    });
+
     socket.on('fetch',function(res){
-        console.log(res);
+        //console.log(res);
         var len = res.length;
         var output = '';
         for(var i=len-1;i>=0;i--){

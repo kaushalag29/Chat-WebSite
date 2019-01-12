@@ -19,6 +19,11 @@ app.get('/',(req,res,next) => {
 });
 
 var body='';
+var users_online = 0;
+
+app.get('/mychat',(req,res,next) => {
+	res.sendFile(path.join(__dirname,'html','mychat.html'));
+});
 
 app.post('/mychat',(req, res, next) => {
 	body = req.body;
@@ -44,10 +49,12 @@ mongoConnect(() => {
  	const db = getDb();
  	io.on('connection',socket => {
  		console.log('Client Connected!');
+ 		users_online++;
+ 		io.emit('user-online',users_online);
  		let chat = db.collection('new-chat');
  		//chat.deleteMany();
- 		console.log('Table Created');
- 		console.log(body);
+ 		//console.log('Table Created');
+ 		//console.log(body);
  		chat.find().limit(100).sort({_id:1}).toArray(function(err, res){
             if(err){
                 throw err;
@@ -56,13 +63,15 @@ mongoConnect(() => {
         });
 
  		socket.on('send', function(data){
- 			console.log(data);
+ 			//console.log(data);
  			chat.insertOne({name:data['name'],msg:data['msg']});
  			io.emit('output',[data]);
  		});
 
  		socket.on('disconnect',function(){
- 			console.log("User Disconnected");
+ 			console.log("Client Disconnected");
+ 			users_online--;
+ 			io.emit('user-online',users_online);
  		});
 
  	});
