@@ -2,8 +2,8 @@
 Simple Website Interface For Unknown Users To Chat With Each Other Using Random Nick-Name.
 
 ## Requirements
-Node Js
-Mongo DB
+1. Node Js
+2. Mongo DB
 
 ## Steps To Run The Web App
 1. Git-Clone the repository.
