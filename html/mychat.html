@@ -1,0 +1,57 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Let's Chat</title>
+</head>
+<style>
+body{
+  overflow: scroll;
+}
+#text-area{
+  height: auto;
+  width: auto;
+}
+#messages{
+  height: 500px;
+  width: 1000px;
+  overflow: scroll;
+  font-size: 20px;
+  font-family: Comic Sans MS;
+  background: #1a1a1a;
+  color: #ffffff;
+  padding:10px;
+}
+#chatbox{
+  height: auto;
+  width: 900px;
+  overflow: scroll;
+  font-size: 20px;
+  font-family: Comic Sans MS;
+  background: #1a1a1a;
+  color: #ffffff;
+  padding:10px;
+}
+</style>
+<body style="background-image: url(./../images/background.gif)">
+  <div id="text-area">
+    <center>
+      <textarea id="messages" placeholder="Welcome To Strange-Chat!Start Chatting!" readonly></textarea>
+    </center>
+  </div><br>
+  <div id="chat-area">
+    <center>
+      <form id="send-chat" action="/" method="GET">
+      <textarea id="chatbox" placeholder="Start Typing Here"></textarea>
+      <input type="button" value="Send" style="background: black;color: #00ff00;padding: 10px;border-radius: 7px;font-family: Comic Sans MS" onclick="handleSend()">
+      </form>
+    </center>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+  <script type="text/javascript" src="../js/mychat.js"></script>
+</body>
+</html>
+

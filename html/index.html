@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Strange-Chat</title>
+</head>
+<style>
+#form-container{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -100px 0 0 -150px;
+}
+</style>
+<body style="background-image: url(./../images/background.gif)">
+  <div id="header" style="width: auto;height: 100px">
+    <center>
+        <img src="./../images/Stranger_Things_Logo.png" style="width: 300px;height: 100px" />
+    </center>
+  </div>
+  <div id="form-container" style="width: auto;height: auto;padding:10px">
+    <center>
+        <form action="/mychat" method="POST">
+            <font size="5" color='#00ff00' face='Comic Sans MS'>Nick:</font>
+            <input type="text" name="nickname" placeholder="Enter Your Nick" maxlength="50">
+            <br>
+            <font size="5" color='#00ff00' face='Comic Sans MS'>Gender:</font>
+            <input type="radio" name="gender" value="male" checked><font size="4" color='#ff0066' face='Impact'>Male</font>
+            <input type="radio" name="gender" value="female"><font size="4" color='#ff0066' face='Impact'>Female</font>
+            <input type="radio" name="gender" value="other"><font size="4" color='#ff0066' face='Impact'>Other</font>
+            <br>
+            <input type="submit" value="Start-Chat" style="background: black;color: #00ff00;padding: 10px;border-radius: 7px;font-family: Comic Sans MS" onclick="form_submit()">
+        </form>
+    </center>
+  </div>
+  <script type="text/javascript">
+
+    //function preventBack() { window.history.forward(); }
+    //setTimeout("preventBack()", 0);
+    //window.onunload = function () { null };
+
+    function form_submit(){
+      window.sessionStorage.clear();
+      var gender_obj = document.getElementsByName('gender');
+      var gender = '';
+      var name = document.getElementsByName('nickname')[0].value+'';
+      for(var i=0;i<3;i++){
+        if(gender_obj[i].checked){
+          gender = gender_obj[i].value;
+          break;
+        }
+      }
+      sessionStorage.setItem("name",name+'');
+      sessionStorage.setItem("gender",gender);
+      if(name === '')
+        alert('Nick Field Cannot Be Empty!');
+    }
+  </script>
+</body>
+</html>
+
