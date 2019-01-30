@@ -41,7 +41,7 @@ var nameToSocketId = {};
 var socketIdToName = {};
 
 app.get('/mychat',(req,res,next) => {
-	console.log(req);
+	//console.log(req);
 	res.render('mychat');
 });
 

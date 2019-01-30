@@ -3,9 +3,9 @@ var socket;
 (function(){
 
     if(window.sessionStorage['name'] === undefined)
-         window.location.href = "http://127.0.0.1:4000";
-
-    socket = io.connect('http://127.0.0.1:4000',{query: "username="+window.sessionStorage['name'] });
+        window.location.href = "http://127.0.0.1:4000";
+    else
+        socket = io.connect('http://127.0.0.1:4000',{query: "username="+window.sessionStorage['name'] });
 
     socket.on('output',function(data){
         if(data !== undefined){
