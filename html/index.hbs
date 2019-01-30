@@ -36,11 +36,11 @@
         </form>
     </center>
   </div>
+  <br><br><br>
+    {{#if errorMsg }}
+       <center><font size="4" color='pink' face='Comic Sans MS'>{{ errorMsg }}</font></center>
+    {{/if}}
   <script type="text/javascript">
-
-    //function preventBack() { window.history.forward(); }
-    //setTimeout("preventBack()", 0);
-    //window.onunload = function () { null };
 
     function form_submit(){
       window.sessionStorage.clear();
@@ -59,6 +59,7 @@
       if(name === '')
         alert('Nick Field Cannot Be Empty!');
     }
+    
   </script>
 </body>
 </html>

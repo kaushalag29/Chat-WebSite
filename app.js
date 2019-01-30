@@ -51,7 +51,7 @@ app.post('/mychat',(req, res, next) => {
 	if(check_nick(body['nickname']))
     	res.render('mychat');
     else
-    	res.redirect('/');
+    	res.render('index',{errorMsg: "Either Choose A Unique Nick Or Don't Use Any Special Symbols Except '_'"});
 });
 
 app.use((req, res, next) => {
