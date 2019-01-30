@@ -11,10 +11,12 @@
 body{
   overflow: scroll;
 }
+
 #text-area{
   height: auto;
   width: auto;
 }
+
 #messages{
   height: 500px;
   width: 1000px;
@@ -25,6 +27,7 @@ body{
   color: #ffffff;
   padding:10px;
 }
+
 #chatbox{
   height: auto;
   width: 900px;
@@ -35,10 +38,50 @@ body{
   color: #ffffff;
   padding:10px;
 }
+.sidenav {
+  height: 100%;
+  width: 160px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  padding-top: 20px;
+  overflow-y: scroll;
+}
+
+.sidenav a {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 18px;
+  color: #818181;
+  display: block;
+  overflow-x: scroll;
+}
+
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 22px;}
+}
 </style>
 <body style="background-image: url(./../images/background.gif)">
-  <div id="online-users" style="color: #00ff00;font-family: Comic Sans MS;font-size: 20px">
-    Active Users: 0
+  <center>
+    <div id="online-users" style="color: #00ff00;font-family: Comic Sans MS;font-size: 20px">
+      Active Users: 0
+    </div>
+  </center>
+  <br>
+  <div class="sidenav">
+    <div id="sidenavTitle" style="color: #00ff00;font-family: Comic Sans MS;font-size: 20px">
+      <center>Active Users</center>
+    </div>
+    <br>
+    <div id="displayUsers">
+    </div>
   </div>
   <div id="text-area">
     <center>
