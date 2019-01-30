@@ -47,6 +47,7 @@
       var gender_obj = document.getElementsByName('gender');
       var gender = '';
       var name = document.getElementsByName('nickname')[0].value+'';
+      name = name.replace(/[^a-zA-Z0-9_]/g,"");
       for(var i=0;i<3;i++){
         if(gender_obj[i].checked){
           gender = gender_obj[i].value;

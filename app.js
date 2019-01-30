@@ -47,6 +47,7 @@ app.get('/mychat',(req,res,next) => {
 
 app.post('/mychat',(req, res, next) => {
 	body = req.body;
+	body['nickname'] = body['nickname'].replace(/[^a-zA-Z0-9_]/g,"");
 	if(check_nick(body['nickname']))
     	res.render('mychat');
     else
