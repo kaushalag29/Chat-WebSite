@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 app.use(nocache());
 
-app.engine('hbs',expressHbs());
+app.engine('hbs',expressHbs({defaultLayout: false}));
 app.set('view engine','hbs');
 app.set('views','html');
 
