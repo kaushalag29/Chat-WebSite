@@ -5,7 +5,7 @@ let _db;
 
 const mongoConnect = callback => {
   MongoClient.connect(
-    'mongodb+srv://username:password@strangechat-aujko.mongodb.net/test?retryWrites=true', { useNewUrlParser: true }
+    'mongodb+srv://kaushala:Armaan.123@cluster0.tntft.mongodb.net/test?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true }
   )
     .then(client => {
       console.log('Database Connected!');

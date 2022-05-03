@@ -1,12 +1,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-const mongoConnect = require('./js/database').mongoConnect;
 const nocache = require('nocache');
 const expressHbs = require('express-handlebars');
-//const Confirm = require('confirm-dialog');
+const cors = require('cors')
 const app = express();
 
+app.use(cors({
+    'origin': '*'
+}));
 
 app.use(express.static(__dirname));
 app.use(express.static(__dirname+'/html'));
@@ -19,20 +21,22 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 app.use(nocache());
 
-app.engine('hbs',expressHbs({defaultLayout: false}));
+const mongoConnect = require('./js/database').mongoConnect;
+
+app.engine('hbs',expressHbs.engine({defaultLayout: false}));
 app.set('view engine','hbs');
 app.set('views','html');
 
 function check_nick(name){
-	if(name == '' || name.endsWith('$'))
-		return false;
-	if(nameToSocketId[name] === undefined)
-		return true;
-	return false;
+        if(name == '' || name.endsWith('$'))
+                return false;
+        if(nameToSocketId[name] === undefined)
+                return true;
+        return false;
 }
 
 app.get('/',(req,res,next) => {
-	res.render('index');
+        res.render('index');
 });
 
 var body='';
@@ -41,17 +45,16 @@ var nameToSocketId = {};
 var socketIdToName = {};
 
 app.get('/mychat',(req,res,next) => {
-	//console.log(req);
-	res.render('mychat');
+        res.render('mychat');
 });
 
 app.post('/mychat',(req, res, next) => {
-	body = req.body;
-	body['nickname'] = body['nickname'].replace(/[^a-zA-Z0-9_]/g,"");
-	if(check_nick(body['nickname']))
-    	res.render('mychat');
+        body = req.body;
+        body['nickname'] = body['nickname'].replace(/[^a-zA-Z0-9_]/g,"");
+        if(check_nick(body['nickname']))
+        res.render('mychat');
     else
-    	res.render('index',{errorMsg: "Either Choose A Unique Nick Or Don't Use Any Special Symbols Except '_'"});
+        res.render('index',{errorMsg: "Either Choose A Unique Nick Or Don't Use Any Special Symbols Except '_'"});
 });
 
 app.use((req, res, next) => {
@@ -59,79 +62,83 @@ app.use((req, res, next) => {
 });
 
 mongoConnect(() => {
-	var server;
-	try{
-		 server = app.listen(4000);
-	}catch(err){
-		console.log(err);
-	}
-	const io = require('socket.io')(server);
- 	const getDb = require('./js/database').getDb;
- 	const db = getDb();
- 	io.on('connection',socket => {
- 		console.log('Client Connected!');
- 		var socket_query = socket.request._query;
- 		users_online++;
- 		console.log(socket.id);
- 		socketIdToName[socket.id] = socket_query['username'];
- 		nameToSocketId[socket_query['username']] = socket.id;
- 		io.emit('user-online',users_online-1);
- 		let chat = db.collection('new-chat');
- 		let users_list = db.collection('online-users');
- 		console.log("adding");
- 		users_list.insertOne({id:socket.id,username:socketIdToName[socket.id]}).then(function(res){
-	 			
-	 			users_list.find().limit(100).sort({_id:1}).toArray().then(function(res){
-	            console.log("emitting");
-	            io.emit('users-list', res);
-        	},function(err){
-	        	if(err){
-	                throw err;
-	            }
-        	});
+        var server;
+        try{
+                 server = app.listen(4000);
+        }catch(err){
+                console.log(err);
+        }
+        const io = require('socket.io')(server, {
+              cors: {
+                origin: '*',
+                methods: '*'
+              }
+        });
+        const getDb = require('./js/database').getDb;
+        const db = getDb();
+        io.on('connection',socket => {
+                console.log('Client Connected!');
+                var socket_query = socket.request._query;
+                users_online++;
+                // console.log(socket.id);
+                socketIdToName[socket.id] = socket_query['username'];
+                nameToSocketId[socket_query['username']] = socket.id;
+                io.emit('user-online',users_online-1);
+                let chat = db.collection('new-chat');
+                let users_list = db.collection('online-users');
+                // console.log("adding");
+                users_list.insertOne({id:socket.id,username:socketIdToName[socket.id]}).then(function(res){
+                    users_list.find().limit(100).sort({_id:1}).toArray().then(function(res){
+                    // console.log("emitting");
+                    io.emit('users-list', res);
+                },function(err){
+                        if(err){
+                        throw err;
+                    }
+                });
 
- 		},function(err){
- 			console.log(err);
- 		});
- 		chat.find().limit(100).sort({_id:1}).toArray().then(function(res){
+                },function(err){
+                        console.log(err);
+                });
+                chat.find().limit(100).sort({_id:1}).toArray().then(function(res){
             socket.emit('fetch', res);
         },function(err){
-        	 if(err){
+                 if(err){
                 throw err;
             }
         });
 
- 		socket.on('send', function(data){
- 			try{
- 				chat.insertOne({name:data['name'],msg:data['msg']}).then(function(res){
- 					io.emit('output',[data]);
- 				},function(err){
- 					console.log(err);
- 				});
- 			}catch(err){
- 				console.log(err);
- 			}
- 		});
+        socket.on('send', function(data){
+                try{
+                    chat.insertOne({name:data['name'],msg:data['msg']}).then(function(res){
+                            io.emit('output',[data]);
+                    },function(err){
+                            console.log(err);
+                    });
+                }catch(err){
+                        console.log(err);
+                }
+        });
 
- 		socket.on('disconnect',function(){
- 			console.log("Client Disconnected");
- 			users_online--;
- 			io.emit('user-online',users_online-1);
- 			io.emit('remove-user',socketIdToName[socket.id],socket.id);
- 			users_list.find({id:socket.id}).toArray().then(function(item){
- 				 //console.log(item);
- 				 users_list.deleteOne(item[0]);
- 				 if(users_online === 0)
- 					chat.deleteMany(),
- 					users_list.deleteMany();
- 			},
- 			function(error){
- 				console.log("Error while deleting user from active user list.");
- 			});
- 			nameToSocketId[socketIdToName[socket.id]] = undefined;
- 			socketIdToName[socket.id] = undefined;
- 		});
+        socket.on('disconnect',function(){
+                console.log("Client Disconnected");
+                users_online--;
+                io.emit('user-online',users_online-1);
+                io.emit('remove-user',socketIdToName[socket.id],socket.id);
+                users_list.find({id:socket.id}).toArray().then(function(item){
+                         //console.log(item);
+                         users_list.deleteOne(item[0]);
+                         if(users_online === 0)
+                                chat.deleteMany(),
+                                users_list.deleteMany();
+                },
+                function(error){
+                        console.log("Error while deleting user from active user list.");
+                });
+                nameToSocketId[socketIdToName[socket.id]] = undefined;
+                socketIdToName[socket.id] = undefined;
+        });
 
- 	});
+    });
 
 });
