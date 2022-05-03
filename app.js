@@ -7,7 +7,9 @@ const cors = require('cors')
 const app = express();
 
 app.use(cors({
-    'origin': '*'
+    'origin': '*',
+    'methods': 'GET,HEAD,PUT,POST,DELETE',
+    'preflightContinue': false
 }));
 
 app.use(express.static(__dirname));
@@ -71,7 +73,7 @@ mongoConnect(() => {
         const io = require('socket.io')(server, {
               cors: {
                 origin: '*',
-                methods: '*'
+                methods: ["GET", "POST", "PUT", "DELETE", "HEAD"]
               }
         });
         const getDb = require('./js/database').getDb;
